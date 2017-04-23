@@ -23,7 +23,7 @@ main() {
       test('should get data on current user.', () {
         expect(responseData['email'], config.email);
       });
-    });
+    }, skip: '');
     group('get /users?email=<email>', () {
       var path = "/users";
       Map responseData;
