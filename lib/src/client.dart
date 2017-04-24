@@ -1,7 +1,8 @@
 library smartsheet.client;
 
 import 'dart:async';
-import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:http/http.dart' as http show Client, Response;
 
 final _authority = "api.smartsheet.com";
 final _version = "2.0";
@@ -9,24 +10,26 @@ final _authorization = "Authorization";
 final _bearer = "Bearer ";
 
 class Client {
-  http.Client _inner;
   Map commonHeaders;
   Client(String token) {
     commonHeaders = {
       _authorization: _bearer + token,
       'Content-Type': 'application/json'
     };
-    _inner = new http.Client();
   }
-  Future<http.Response> get(String unencodedPath, {Map queryParameters}) {
+  Future<Map> get(String unencodedPath, {Map queryParameters}) async {
+    var client = new http.Client();
     var uri = _buildUri(unencodedPath, queryParameters);
-    return _inner.get(uri, headers: commonHeaders);
+    var response = await client.get(uri, headers: commonHeaders);
+    return _convertFrom(response);
   }
 
-  Future<http.Response> post(String unencodedPath, Map body,
-      {Map queryParameters}) {
+  Future<Map> post(String unencodedPath, Map body,
+      {Map queryParameters}) async {
+    var client = new http.Client();
     var uri = _buildUri(unencodedPath, queryParameters);
-    return _inner.post(uri, headers: commonHeaders, body: body);
+    var response = await client.post(uri, headers: commonHeaders, body: body);
+    return _convertFrom(response);
   }
 }
 
@@ -40,3 +43,5 @@ Uri _buildUri(String unencodedPath, [Map queryParameters]) {
 
   return uri;
 }
+
+Map _convertFrom(http.Response response) => JSON.decode(response.body);

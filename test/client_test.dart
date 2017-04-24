@@ -1,6 +1,5 @@
 library smartsheet.test.client;
 
-import 'dart:convert';
 import 'package:test/test.dart';
 import 'package:smartsheet/src/client.dart';
 import 'common.dart';
@@ -17,20 +16,18 @@ main() {
       var path = "/users/me";
       Map responseData;
       setUpAll(() async {
-        var response = await client.get(path);
-        responseData = JSON.decode(response.body);
+        responseData = await client.get(path);
       });
       test('should get data on current user.', () {
         expect(responseData['email'], config.email);
       });
-    }, skip: '');
+    });
     group('get /users?email=<email>', () {
       var path = "/users";
       Map responseData;
       setUpAll(() async {
-        var response =
+        responseData =
             await client.get(path, queryParameters: {'email': config.email});
-        responseData = JSON.decode(response.body);
       });
       test('should get data on user', () {
         expect(responseData['email'], config.email);
